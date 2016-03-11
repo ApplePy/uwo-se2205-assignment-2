@@ -6,6 +6,8 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * Created by darryl on 2016-03-11.
+ *
+ * I have to sort this in-place. -.-
  */
 public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
 
@@ -19,15 +21,15 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
             write = RWLock.writeLock();
         }
 
-        internalSortHelper(array);
+        internalSortHelper(new Bounds(begin, end));
     }
 
-    private ArrayList<T> internalSortHelper(ArrayList<T> subArray) {
-        if(subArray.size() < 2){
-            return subArray;
+    private Bounds internalSortHelper(Bounds boundary) {
+        if(boundary.size() < 2){
+            return boundary;
         }
         else {
-            ArrayList<T> leftArray = new ArrayList<>();
+            /*ArrayList<T> leftArray = new ArrayList<>();
             ArrayList<T> rightArray = new ArrayList<>();
 
             for (int i = 0; i < subArray.size() / 2; i++) {
@@ -36,41 +38,54 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
 
             for (int i = subArray.size() / 2; i < subArray.size(); i++) {
                 rightArray.add(subArray.get(i));
-            }
+            }*/
 
-            leftArray = internalSortHelper(leftArray);
-            rightArray = internalSortHelper(rightArray);
+            int partition = (boundary.end + boundary.begin) / 2;
 
-            ArrayList<T> result = merge(leftArray, rightArray);
-            return result;
+            Bounds left = internalSortHelper(new Bounds(boundary.begin, partition));
+            Bounds right = internalSortHelper(new Bounds(partition, boundary.end));
+
+            return merge(left, right);
         }
     }
 
-    private ArrayList<T> merge(ArrayList<T> leftArray, ArrayList<T> rightArray) {
+    private Bounds merge(Bounds bLeft, Bounds bRight) {
+        ArrayList<T> leftArray = new ArrayList<>();
+        ArrayList<T> rightArray = new ArrayList<>();
+
+        for (int i = bLeft.begin; i < bLeft.end; i++)
+            leftArray.add(array.get(i));
+        for (int i = bRight.begin; i < bRight.end; i++)
+            rightArray.add(array.get(i));
+
+
         ListIterator<T> leftPointer = leftArray.listIterator();
         ListIterator<T> rightPointer = rightArray.listIterator();
-        ArrayList<T> result = new ArrayList<>();
+        ListIterator<T> result = array.listIterator(bLeft.begin);
+        result.next(); // Just to get it ready
 
         while (leftPointer.hasNext() && rightPointer.hasNext()) {
             T leftComparator = leftPointer.next();
             T rightComparator = rightPointer.next();
 
             if (leftComparator.compareTo(rightComparator) < 0) {
-                result.add(leftComparator);
+                result.set(leftComparator);
+                result.next();
                 rightPointer.previous();
             } else {
-                result.add(rightComparator);
+                result.set(rightComparator);
+                result.next();
                 leftPointer.previous();
             }
         }
 
         while (leftPointer.hasNext()) {
-            result.add(leftPointer.next());
+            result.set(leftPointer.next());
         }
         while (rightPointer.hasNext()) {
-                result.add(rightPointer.next());
+                result.set(rightPointer.next());
         }
 
-        return result;
+        return new Bounds(bLeft.begin, bRight.end);
     }
 }
