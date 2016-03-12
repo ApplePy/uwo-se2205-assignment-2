@@ -58,13 +58,13 @@ public class GraphicsPanel extends JPanel {
         ReadLock rl = rectLock.readLock();
 
         rl.lock();
-        int width = getWidth() / rectangles.size();
-        int startPos = (getWidth() % (rectangles.size() * width)) / 2;
+        int width = getWidth() / rectangles.size();   // Not allowed to resize the rectangles themselves...
+        int startPos = (getWidth() - (rectangles.size() * width)) / 2;
         int counter = 0;
 
         for (ImprovedRectangle rect : rectangles) {
             g.setColor(rect.getColor());
-            g.fillRect(counter++ * width + startPos, getHeight() * 4 / 5 - rect.height, rect.width * width, rect.height);
+            g.fillRect(counter++ * width + startPos, getHeight() * 4 / 5 - rect.height, rect.width, rect.height);
         }
         rl.unlock();
     }
