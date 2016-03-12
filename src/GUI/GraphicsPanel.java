@@ -1,9 +1,11 @@
 package GUI;
 
 import Sorts.SortingFunction;
+import Sorts.MergeSort;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.*;
@@ -13,42 +15,29 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.*;
  */
 public class GraphicsPanel extends JPanel {
 
+    private ArrayList<ImprovedRectangle> rectanglesOriginal;
     private ArrayList<ImprovedRectangle> rectangles;
     private ReentrantReadWriteLock rectLock = new ReentrantReadWriteLock();
 
-    public GraphicsPanel() {
+    public GraphicsPanel () {
         super();
         rectangles = new ArrayList<>();
+        rectanglesOriginal = new ArrayList<>();
     }
-
-    public GraphicsPanel(LayoutManager layout) {
+    public GraphicsPanel (LayoutManager layout) {
         super (layout);
         rectangles = new ArrayList<>();
+        rectanglesOriginal = new ArrayList<>();
     }
-
-    public GraphicsPanel(boolean isDoubleBuffered) {
+    public GraphicsPanel (boolean isDoubleBuffered) {
         super (isDoubleBuffered);
         rectangles = new ArrayList<>();
+        rectanglesOriginal = new ArrayList<>();
     }
-
-    public GraphicsPanel(LayoutManager layout, boolean isDoubleBuffered) {
+    public GraphicsPanel (LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         rectangles = new ArrayList<>();
-    }
-
-    public void reset() {
-
-        ImprovedRectangle.maxRandomHeight = getHeight() * 3 / 5;
-
-        WriteLock wLock = rectLock.writeLock();
-        if (wLock.tryLock()) {
-            for (int i = 0; i < 256; i++) {
-                rectangles.add(new ImprovedRectangle());
-            }
-            wLock.unlock();
-        }
-        else
-            throw new RuntimeException("This should not happen...");
+        rectanglesOriginal = new ArrayList<>();
     }
 
     @Override
@@ -58,6 +47,7 @@ public class GraphicsPanel extends JPanel {
         ReadLock rl = rectLock.readLock();
 
         rl.lock();
+        // TODO: Possible divide-by-zero error
         int width = getWidth() / rectangles.size();   // Not allowed to resize the rectangles themselves...
         int startPos = (getWidth() - (rectangles.size() * width)) / 2;
         int counter = 0;
@@ -69,12 +59,44 @@ public class GraphicsPanel extends JPanel {
         rl.unlock();
     }
 
-    public Thread sortRectangles (SortingFunction<ImprovedRectangle> input) {
+    public void scramble() {
+        ImprovedRectangle.maxRandomHeight = getHeight() * 3 / 5;
+        for (int i = 0; i < 256; i++) {
+            rectanglesOriginal.add(new ImprovedRectangle()); // No write lock needed, rectanglesOriginal never leaves class
+        }
+        reset();
+    }
+
+    public Thread setup(SortingFunction<ImprovedRectangle> input) {
+        scramble();
+        return sortRectangles(input, false);
+    }
+
+    public void reset() {
+        if (rectanglesOriginal.size() > 0) {
+            WriteLock wLock = rectLock.writeLock();
+            wLock.lock();
+            rectangles = (ArrayList) rectanglesOriginal.clone();
+            wLock.unlock();
+        } else
+            scramble();
+    }
+
+    public Thread sortRectangles(SortingFunction<ImprovedRectangle> input) {
+        return sortRectangles(input, true);
+    }
+
+    private Thread sortRectangles (SortingFunction<ImprovedRectangle> input, boolean repaint) {
         if (input != null) {
+            JPanel panel = null;
+
             if (rectangles.size() == 0)
                 reset();
 
-            return input.asyncSort(rectangles, 0, rectangles.size(), rectLock, this);
+            if (repaint)
+                panel = this;
+
+            return input.asyncSort(rectangles, 0, rectangles.size(), rectLock, panel);
         }
         else {
             throw new IllegalArgumentException("A sorting function must be supplied!");
