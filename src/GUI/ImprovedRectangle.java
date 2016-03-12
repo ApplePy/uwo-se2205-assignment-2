@@ -8,7 +8,8 @@ import java.util.Random;
  */
 public class ImprovedRectangle extends Rectangle implements Comparable<ImprovedRectangle> {
 
-    private Color rectangleColor = Color.RED;
+    public static int maxRandomHeight = 300;
+    private Color rectangleColor;
 
     public ImprovedRectangle() {
         super(randomHeight());
@@ -56,7 +57,7 @@ public class ImprovedRectangle extends Rectangle implements Comparable<ImprovedR
 
     private static Dimension randomHeight() {
         Random rnd = new Random();
-        return new Dimension(1,rnd.nextInt(100));
+        return new Dimension(1,rnd.nextInt(maxRandomHeight));
     }
 
     public int compareTo(ImprovedRectangle other) {

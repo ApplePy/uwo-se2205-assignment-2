@@ -5,7 +5,6 @@ import Sorts.SortingFunction;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.*;
 
@@ -20,28 +19,27 @@ public class GraphicsPanel extends JPanel {
     public GraphicsPanel() {
         super();
         rectangles = new ArrayList<>();
-        reset();
     }
 
     public GraphicsPanel(LayoutManager layout) {
         super (layout);
         rectangles = new ArrayList<>();
-        reset();
     }
 
     public GraphicsPanel(boolean isDoubleBuffered) {
         super (isDoubleBuffered);
         rectangles = new ArrayList<>();
-        reset();
     }
 
     public GraphicsPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         rectangles = new ArrayList<>();
-        reset();
     }
 
     public void reset() {
+
+        ImprovedRectangle.maxRandomHeight = getHeight() * 3 / 5;
+
         WriteLock wLock = rectLock.writeLock();
         if (wLock.tryLock()) {
             for (int i = 0; i < 256; i++) {
@@ -60,24 +58,26 @@ public class GraphicsPanel extends JPanel {
         ReadLock rl = rectLock.readLock();
 
         rl.lock();
+        int width = getWidth() / rectangles.size();
+        int startPos = (getWidth() % (rectangles.size() * width)) / 2;
         int counter = 0;
+
         for (ImprovedRectangle rect : rectangles) {
             g.setColor(rect.getColor());
-            g.fillRect(counter++ * 3, 400 - rect.height, rect.width * 2, rect.height);
+            g.fillRect(counter++ * width + startPos, getHeight() * 4 / 5 - rect.height, rect.width * width, rect.height);
         }
         rl.unlock();
     }
 
-    public void sortRectangles (SortingFunction<ImprovedRectangle> input) {
-
-        /*
-        TODO:
-             what to accomplish - sort should run in its own thread, sorting slowly, yielding after every switch (optional).
-             Meanwhile, the paint subsystem should be regularly called to display the results as a snapshot in time.
-             This should serve to allow any generic sort to function properly with the results displayable.
-         */
+    public Thread sortRectangles (SortingFunction<ImprovedRectangle> input) {
         if (input != null) {
-            Thread newThread = input.asyncSort(rectangles, 0, rectangles.size(), rectLock, this);
+            if (rectangles.size() == 0)
+                reset();
+
+            return input.asyncSort(rectangles, 0, rectangles.size(), rectLock, this);
+        }
+        else {
+            throw new IllegalArgumentException("A sorting function must be supplied!");
         }
     }
 }
