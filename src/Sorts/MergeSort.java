@@ -29,16 +29,6 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
             return boundary;
         }
         else {
-            /*ArrayList<T> leftArray = new ArrayList<>();
-            ArrayList<T> rightArray = new ArrayList<>();
-
-            for (int i = 0; i < subArray.size() / 2; i++) {
-                leftArray.add(subArray.get(i));
-            }
-
-            for (int i = subArray.size() / 2; i < subArray.size(); i++) {
-                rightArray.add(subArray.get(i));
-            }*/
 
             int partition = (boundary.end + boundary.begin) / 2;
 
@@ -53,10 +43,16 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
         ArrayList<T> leftArray = new ArrayList<>();
         ArrayList<T> rightArray = new ArrayList<>();
 
+        if (RWLock != null)
+            read.lock();
+
         for (int i = bLeft.begin; i < bLeft.end; i++)
             leftArray.add(array.get(i));
         for (int i = bRight.begin; i < bRight.end; i++)
             rightArray.add(array.get(i));
+
+        if (RWLock != null)
+            read.unlock();
 
 
         ListIterator<T> leftPointer = leftArray.listIterator();
@@ -67,25 +63,54 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
         while (leftPointer.hasNext() && rightPointer.hasNext()) {
             T leftComparator = leftPointer.next();
             T rightComparator = rightPointer.next();
+            T valueToWrite = null;
+
+
 
             if (leftComparator.compareTo(rightComparator) < 0) {
-                result.set(leftComparator);
-                result.next();
+                valueToWrite = leftComparator;
                 rightPointer.previous();
             } else {
-                result.set(rightComparator);
-                result.next();
+                valueToWrite = rightComparator;
                 leftPointer.previous();
             }
+
+            if (RWLock != null)
+                write.lock();
+
+            result.set(valueToWrite);
+            result.next();
+
+            repainting("Interrupted Exception, Merge Sort.");
+
+            if (RWLock != null)
+                write.unlock();
+
         }
+
+        if (RWLock != null)
+            write.lock();
 
         while (leftPointer.hasNext()) {
-            result.set(leftPointer.next());
+            finalClean(result, leftPointer.next());
         }
         while (rightPointer.hasNext()) {
-                result.set(rightPointer.next());
+            finalClean(result, rightPointer.next());
         }
 
+        if (RWLock != null)
+            write.unlock();
+
+
         return new Bounds(bLeft.begin, bRight.end);
+    }
+
+    private void finalClean(ListIterator<T> result, T obj) {
+        result.set(obj);
+
+        if (result.hasNext())
+            result.next();
+
+        repainting("Interrupted Exception, Merge Sort.");
     }
 }
