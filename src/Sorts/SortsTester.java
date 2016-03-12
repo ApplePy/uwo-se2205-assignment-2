@@ -1,5 +1,7 @@
 package Sorts;
 
+import GUI.ImprovedRectangle;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ public class SortsTester {
 
     public static void main(String[] args) {
 
-        int length = 30000;
+        int length = 3000;
 
         System.out.println("Testing Selection Sort - Synchronous");
         testHelper(new SelectionSort<>(), length, false);
@@ -30,8 +32,11 @@ public class SortsTester {
 
     }
 
-    public static void testHelper(SortingFunction<Integer> sorter, int length, boolean asynchronous) {
-        ArrayList<Integer> array = SortsTester.arrayGenerator(length);
+    public static void testHelper(SortingFunction<ImprovedRectangle> sorter, int length, boolean asynchronous) {
+        //ArrayList<Integer> array = SortsTester.arrayGenerator(length);
+        ArrayList<ImprovedRectangle> array = new ArrayList<>();
+        for (int i = 0; i < length; i++)
+            array.add(new ImprovedRectangle());
         //printArray(array);
 
         if (!asynchronous)
@@ -51,8 +56,25 @@ public class SortsTester {
 
         //printArray(array);
 
-        System.out.println(sortedValidator(array));
+        System.out.println(sortedValidator(array, true));
         System.out.println("");
+    }
+
+    public static boolean sortedValidator(ArrayList<ImprovedRectangle> array, boolean dummy) {
+        boolean result = true;
+        ListIterator<ImprovedRectangle> i = array.listIterator();
+        ImprovedRectangle prevVal = i.next();
+
+        while (i.hasNext()) {
+            ImprovedRectangle nextVal = i.next();
+            if (prevVal.compareTo(nextVal) > 0) {
+                result = false;
+                break;
+            }
+            prevVal = nextVal;
+        }
+
+        return result;
     }
 
     public static boolean sortedValidator(ArrayList<Integer> array) {
@@ -61,10 +83,12 @@ public class SortsTester {
         Integer prevVal = i.next();
 
         while (i.hasNext()) {
-            if (prevVal > i.next()) {
+            Integer nextVal = i.next();
+            if (prevVal > nextVal) {
                 result = false;
                 break;
             }
+            prevVal = nextVal;
         }
 
         return result;

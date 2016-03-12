@@ -81,10 +81,10 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
             result.set(valueToWrite);
             result.next();
 
-            repainting("Interrupted Exception, Merge Sort.");
-
             if (RWLock != null)
                 write.unlock();
+
+            repainting("Interrupted Exception, Merge Sort.");
 
         }
 
@@ -92,25 +92,23 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
             write.lock();
 
         while (leftPointer.hasNext()) {
-            finalClean(result, leftPointer.next());
+            result.set(leftPointer.next());
+
+            if (result.hasNext())
+                result.next();
         }
         while (rightPointer.hasNext()) {
-            finalClean(result, rightPointer.next());
-        }
+            result.set(rightPointer.next());
 
+            if (result.hasNext())
+                result.next();
+        }
         if (RWLock != null)
             write.unlock();
 
+        repainting("Interrupted Exception, Merge Sort.");
+
 
         return new Bounds(bLeft.begin, bRight.end);
-    }
-
-    private void finalClean(ListIterator<T> result, T obj) {
-        result.set(obj);
-
-        if (result.hasNext())
-            result.next();
-
-        repainting("Interrupted Exception, Merge Sort.");
     }
 }

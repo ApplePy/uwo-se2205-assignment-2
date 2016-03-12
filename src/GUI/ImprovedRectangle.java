@@ -1,8 +1,7 @@
-import com.sun.istack.internal.NotNull;
+package GUI;
 
 import java.awt.*;
 import java.util.Random;
-import static java.lang.Math.abs;
 
 /**
  * Created by darryl on 2016-03-10.
@@ -12,7 +11,7 @@ public class ImprovedRectangle extends Rectangle implements Comparable<ImprovedR
     private Color rectangleColor = Color.RED;
 
     public ImprovedRectangle() {
-        super();
+        super(randomHeight());
         rectangleColor = randomColour();
     }
 
@@ -55,7 +54,12 @@ public class ImprovedRectangle extends Rectangle implements Comparable<ImprovedR
         return new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
     }
 
+    private static Dimension randomHeight() {
+        Random rnd = new Random();
+        return new Dimension(1,rnd.nextInt(100));
+    }
+
     public int compareTo(ImprovedRectangle other) {
-        return abs(height - other.height);
+        return height - other.height;
     }
 }

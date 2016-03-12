@@ -1,3 +1,5 @@
+package GUI;
+
 import Sorts.SortingFunction;
 
 import javax.swing.*;
@@ -16,6 +18,25 @@ public class GraphicsPanel extends JPanel {
     private ReentrantReadWriteLock rectLock = new ReentrantReadWriteLock();
 
     public GraphicsPanel() {
+        super();
+        rectangles = new ArrayList<>();
+        reset();
+    }
+
+    public GraphicsPanel(LayoutManager layout) {
+        super (layout);
+        rectangles = new ArrayList<>();
+        reset();
+    }
+
+    public GraphicsPanel(boolean isDoubleBuffered) {
+        super (isDoubleBuffered);
+        rectangles = new ArrayList<>();
+        reset();
+    }
+
+    public GraphicsPanel(LayoutManager layout, boolean isDoubleBuffered) {
+        super(layout, isDoubleBuffered);
         rectangles = new ArrayList<>();
         reset();
     }
@@ -37,18 +58,14 @@ public class GraphicsPanel extends JPanel {
         super.paintComponent(g);
 
         ReadLock rl = rectLock.readLock();
-        try {
-            if (rl.tryLock(5, TimeUnit.MILLISECONDS)) {
-                for (ImprovedRectangle rect : rectangles) {
-                    g.setColor(rect.getColor());
-                    g.fillRect(rect.x, rect.y, rect.width, rect.height);
-                }
-            }
-            rl.unlock();
-        } catch (InterruptedException e) {
-            //IDK what to put in here
-            //rl.unlock(); // TODO: fix this - not sure how to use locks in this scenario
+
+        rl.lock();
+        int counter = 0;
+        for (ImprovedRectangle rect : rectangles) {
+            g.setColor(rect.getColor());
+            g.fillRect(counter++ * 3, 400 - rect.height, rect.width * 2, rect.height);
         }
+        rl.unlock();
     }
 
     public void sortRectangles (SortingFunction<ImprovedRectangle> input) {
@@ -60,7 +77,6 @@ public class GraphicsPanel extends JPanel {
              This should serve to allow any generic sort to function properly with the results displayable.
          */
         if (input != null) {
-
             Thread newThread = input.asyncSort(rectangles, 0, rectangles.size(), rectLock, this);
         }
     }

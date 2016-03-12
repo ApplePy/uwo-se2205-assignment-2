@@ -1,4 +1,6 @@
-/*import javax.swing.*;
+package GUI;
+
+import javax.swing.*;
 import java.awt.*;
 
 import static java.awt.FlowLayout.LEFT;
@@ -6,23 +8,23 @@ import static java.awt.FlowLayout.LEFT;
 /**
  * Created by darryl on 2016-03-10.
  */
-/*
+
 public class MainPanel extends JFrame {
 
     public MainPanel(String title) {
         super (title);
-        commonConstructor();
+        //commonConstructor();
     }
     public MainPanel() {
         super();
-        commonConstructor();
+        //commonConstructor();
     }
 
-    private void commonConstructor() {
+    /*private void commonConstructor() {
         LayoutManager layout = new FlowLayout(LEFT);
         JPanel topPanel = new MainPanel(layout, false);
-        GraphicsPanel graphicsPanel = new JPanel(true);
-        GraphicsPanel buttonsPanel = new JPanel(false);
+        GraphicsPanel graphicsPanel = new GraphicsPanel(true);
+        ButtonsPanel buttonsPanel = new ButtonsPanel(false);
 
 
         //==== Elements Setup ====//
@@ -45,5 +47,5 @@ public class MainPanel extends JFrame {
         pack();
         setResizable(false);
         setVisible(true);
-    }
-}*/
+    }*/
+}
