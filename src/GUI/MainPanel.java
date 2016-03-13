@@ -5,8 +5,6 @@ import Sorts.MergeSort;
 import javax.swing.*;
 import java.awt.*;
 
-import static java.awt.FlowLayout.LEFT;
-
 /**
  * Created by darryl on 2016-03-10.
  */
@@ -44,7 +42,7 @@ public class MainPanel extends JPanel {
         add(graphicsPanel);
         add(buttonsPanel);
 
-        buttonsPanel.setTarget(graphicsPanel);
+        buttonsPanel.setControlTarget(graphicsPanel);
     }
 
     void setupComplete() {
