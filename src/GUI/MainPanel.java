@@ -1,5 +1,7 @@
 package GUI;
 
+import Sorts.MergeSort;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,43 +11,43 @@ import static java.awt.FlowLayout.LEFT;
  * Created by darryl on 2016-03-10.
  */
 
-public class MainPanel extends JFrame {
+public class MainPanel extends JPanel {
 
-    public MainPanel(String title) {
-        super (title);
-        //commonConstructor();
-    }
+    private GraphicsPanel graphicsPanel;
+    private ButtonsPanel buttonsPanel;
+    
+
     public MainPanel() {
         super();
-        //commonConstructor();
+        commonConstructor();
+    }
+    public MainPanel(LayoutManager layout) {
+        super (layout);
+        commonConstructor();
+    }
+    public MainPanel(boolean isDoubleBuffered) {
+        super (isDoubleBuffered);
+        commonConstructor();
+    }
+    public MainPanel(LayoutManager layout, boolean isDoubleBuffered) {
+        super(layout, isDoubleBuffered);
+        commonConstructor();
     }
 
-    /*private void commonConstructor() {
-        LayoutManager layout = new FlowLayout(LEFT);
-        JPanel topPanel = new MainPanel(layout, false);
-        GraphicsPanel graphicsPanel = new GraphicsPanel(true);
-        ButtonsPanel buttonsPanel = new ButtonsPanel(false);
+    private void commonConstructor() {
+        setBackground(new Color(170,170,170));
 
+        LayoutManager gridLayout = new GridLayout(0, 1, 0, 5);
+        graphicsPanel = new GraphicsPanel(true);
+        buttonsPanel = new ButtonsPanel(gridLayout, false);
 
-        //==== Elements Setup ====//
-        graphicsPanel.setPreferredSize(new Dimension(MainFrame.width * 4 / 5, MainFrame.height));
-        buttonsPanel.setPreferredSize(new Dimension(MainFrame.width / 5, MainFrame.height));
-        topPanel.add(graphicsPanel);
-        topPanel.add(buttonsPanel);
-        graphicsPanel.add(new JLabel("test"));
-        topPanel.setBackground(new Color(170,170,170));
-        //mainFrame.add(topPanel);
+        add(graphicsPanel);
+        add(buttonsPanel);
 
+        buttonsPanel.setTarget(graphicsPanel);
+    }
 
-
-        //==== Frame Boilerplate ====//
-        //mainFrame.setJMenuBar();
-        setLayout(layout);
-        setContentPane(topPanel);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //setMinimumSize(new Dimension(MainFrame.width, MainFrame.height));
-        pack();
-        setResizable(false);
-        setVisible(true);
-    }*/
+    void setupComplete() {
+        graphicsPanel.setup(new MergeSort<>());
+    }
 }

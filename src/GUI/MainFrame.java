@@ -13,8 +13,10 @@ import static java.awt.FlowLayout.*;
  */
 public class MainFrame extends JFrame {
 
-    public int width = 1000;
+    public int width = 640;
     public int height = 500;
+
+    private MainPanel topPanel;
 
     public static void main(String[] args) {
 
@@ -32,32 +34,24 @@ public class MainFrame extends JFrame {
     }
 
     private void commonConstructor() {
-        LayoutManager layout = new FlowLayout(LEFT);
-        JPanel topPanel = new JPanel(layout, false);
-        GraphicsPanel graphicsPanel = new GraphicsPanel(true);
-        ButtonsPanel buttonsPanel = new ButtonsPanel(false);
-
-
-        //==== Elements Setup ====//
-        graphicsPanel.setPreferredSize(new Dimension(width * 4 / 5, height));
-        buttonsPanel.setPreferredSize(new Dimension(width / 5, height));
-        topPanel.add(graphicsPanel);
-        topPanel.add(buttonsPanel);
-        graphicsPanel.add(new JLabel("test"));
-        topPanel.setBackground(new Color(170,170,170));
-        //mainFrame.add(topPanel);
-
-
+        topPanel = new MainPanel(false);
 
         //==== Frame Boilerplate ====//
         //mainFrame.setJMenuBar();
-        setLayout(layout);
+        //setLayout(layout);
         setContentPane(topPanel);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //setMinimumSize(new Dimension(MainFrame.width, MainFrame.height));
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
-        setResizable(false);
+        setMinimumSize(new Dimension(getWidth(),getHeight()));
+        setResizable(true);
         setVisible(true);
-        graphicsPanel.sortRectangles(new MergeSort<ImprovedRectangle>());
+        topPanel.setupComplete();
+        //graphicsPanel.setup(new MergeSort<ImprovedRectangle>());
+        //try {Thread.sleep(500);} catch (InterruptedException e) {System.out.println("test");}
+        //graphicsPanel.scramble();
+        //graphicsPanel.repaint();
+        //try {Thread.sleep(500);} catch (InterruptedException e) {System.out.println("test");}
+        //graphicsPanel.sortRectangles(new SelectionSort<>());
+        //try {Thread.sleep(500);} catch (InterruptedException e) {System.out.println("test");}
     }
 }

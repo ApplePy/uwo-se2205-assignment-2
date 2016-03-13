@@ -21,27 +21,30 @@ public class GraphicsPanel extends JPanel {
 
     public GraphicsPanel () {
         super();
-        rectangles = new ArrayList<>();
-        rectanglesOriginal = new ArrayList<>();
+        commonConstructor();
     }
-    public GraphicsPanel (LayoutManager layout) {
+    public GraphicsPanel ( LayoutManager layout) {
         super (layout);
-        rectangles = new ArrayList<>();
-        rectanglesOriginal = new ArrayList<>();
+        commonConstructor();
     }
-    public GraphicsPanel (boolean isDoubleBuffered) {
+    public GraphicsPanel ( boolean isDoubleBuffered) {
         super (isDoubleBuffered);
-        rectangles = new ArrayList<>();
-        rectanglesOriginal = new ArrayList<>();
+        commonConstructor();
     }
-    public GraphicsPanel (LayoutManager layout, boolean isDoubleBuffered) {
+    public GraphicsPanel ( LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
+        commonConstructor();
+    }
+
+    private void commonConstructor() {
         rectangles = new ArrayList<>();
         rectanglesOriginal = new ArrayList<>();
+        setPreferredSize(new Dimension(640 * 4 / 5, 500)); // TODO: FIX HARDCODING!
+        add(new JLabel("Visualization Area"));
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         ReadLock rl = rectLock.readLock();
@@ -60,7 +63,11 @@ public class GraphicsPanel extends JPanel {
     }
 
     public void scramble() {
+        rectanglesOriginal.clear();
+        rectangles.clear();
+
         ImprovedRectangle.maxRandomHeight = getHeight() * 3 / 5;
+
         for (int i = 0; i < 256; i++) {
             rectanglesOriginal.add(new ImprovedRectangle()); // No write lock needed, rectanglesOriginal never leaves class
         }
@@ -78,6 +85,7 @@ public class GraphicsPanel extends JPanel {
             wLock.lock();
             rectangles = (ArrayList) rectanglesOriginal.clone();
             wLock.unlock();
+            repaint();
         } else
             scramble();
     }
