@@ -46,10 +46,6 @@ public class ImprovedRectangle extends Rectangle implements Comparable<ImprovedR
         rectangleColor = randomColour();
     }
 
-    public Color getColor() {
-        return new Color (rectangleColor.getRGB());
-    }
-
     private static Color randomColour() {
         Random rand = new Random();
         return new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
@@ -57,7 +53,11 @@ public class ImprovedRectangle extends Rectangle implements Comparable<ImprovedR
 
     private static Dimension randomHeight() {
         Random rnd = new Random();
-        return new Dimension(1,rnd.nextInt(maxRandomHeight));
+        return new Dimension(1, rnd.nextInt(maxRandomHeight));
+    }
+
+    public Color getColor() {
+        return new Color(rectangleColor.getRGB());
     }
 
     public int compareTo(ImprovedRectangle other) {

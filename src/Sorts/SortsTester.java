@@ -49,7 +49,11 @@ public class SortsTester {
             System.out.print("Waiting...");
             while (res.isAlive()) {
                 //System.out.print (".");
-                try {Thread.sleep(1);} catch (InterruptedException e) {System.out.println ("Exception");}
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    System.out.println("Exception");
+                }
             }
             System.out.println(" Took (milliseconds): " + (Duration.between(startTime, Instant.now()).toMillis()));
         }
@@ -109,7 +113,7 @@ public class SortsTester {
         System.out.print('[');
         ListIterator<Integer> i = array.listIterator();
         while (i.hasNext()) {
-                System.out.print(i.next());
+            System.out.print(i.next());
             if (i.hasNext())
                 System.out.print(",");
         }

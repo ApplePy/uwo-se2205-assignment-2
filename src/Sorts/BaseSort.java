@@ -3,7 +3,6 @@ package Sorts;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Created by darryl on 2016-03-11.
@@ -21,7 +20,7 @@ abstract class BaseSort<T extends Comparable<? super T>> implements SortingFunct
     @Override
     public void run() {
         if (array != null && begin <= end && RWLock != null) {
-                internalSort();
+            internalSort();
         } else {
             throw new UninitializedException("asyncSort was not called first!");
         }
@@ -29,7 +28,7 @@ abstract class BaseSort<T extends Comparable<? super T>> implements SortingFunct
 
     @Override
     public void sort(ArrayList<T> array, int begin, int end) {
-            sort(array, begin, end, null);
+        sort(array, begin, end, null);
     }
 
     @Override
@@ -40,8 +39,7 @@ abstract class BaseSort<T extends Comparable<? super T>> implements SortingFunct
             this.end = end;
             this.repainter = repainter;
             internalSort();
-        }
-        else
+        } else
             throw new IllegalArgumentException("Invalid array or begin/end points!");
     }
 
@@ -53,8 +51,7 @@ abstract class BaseSort<T extends Comparable<? super T>> implements SortingFunct
             this.end = end;
             this.RWLock = RWLock;
             this.repainter = repainter;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Either array == null, no read/write lock was specified, or begin < end.");
         }
         Thread runningThread = new Thread(this);
@@ -73,7 +70,11 @@ abstract class BaseSort<T extends Comparable<? super T>> implements SortingFunct
                 repainter.repaint();
             else
                 repainter.paintImmediately(repainter.getVisibleRect());
-            try {Thread.sleep(5);} catch (InterruptedException e) {System.out.println(message);}
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                System.out.println(message);
+            }
         }
     }
 }

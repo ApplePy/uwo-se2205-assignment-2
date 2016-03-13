@@ -11,7 +11,7 @@ public class UninitializedException extends RuntimeException {
     }
 
     public UninitializedException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
 
     public UninitializedException(Throwable cause) {
@@ -19,7 +19,7 @@ public class UninitializedException extends RuntimeException {
     }
 
     public UninitializedException(String message, Throwable cause, boolean enableSuppression, boolean writeableStackTrace) {
-        super (message, cause, enableSuppression, writeableStackTrace);
+        super(message, cause, enableSuppression, writeableStackTrace);
     }
 
     public UninitializedException() {

@@ -2,6 +2,7 @@ package GUI;
 
 import Sorts.MergeSort;
 import Sorts.SelectionSort;
+import Sorts.SortType;
 import Sorts.SortingFunction;
 
 import javax.swing.*;
@@ -26,15 +27,18 @@ public class ButtonsPanel extends JPanel {
         super();
         commonConstructor();
     }
-    public ButtonsPanel( LayoutManager layout) {
-        super (layout);
+
+    public ButtonsPanel(LayoutManager layout) {
+        super(layout);
         commonConstructor();
     }
-    public ButtonsPanel( boolean isDoubleBuffered) {
-        super (isDoubleBuffered);
+
+    public ButtonsPanel(boolean isDoubleBuffered) {
+        super(isDoubleBuffered);
         commonConstructor();
     }
-    public ButtonsPanel( LayoutManager layout, boolean isDoubleBuffered) {
+
+    public ButtonsPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         commonConstructor();
     }
@@ -62,6 +66,7 @@ public class ButtonsPanel extends JPanel {
         merge.addActionListener(new sortAction(target, new MergeSort<>(), SortType.MERGESORT));
         reset.addActionListener(new resetAction(target));
     }
+
     private void removeOldActionListeners(JButton target) {
         ActionListener[] listeners = target.getActionListeners();
         for (ActionListener al : listeners) {
@@ -80,7 +85,7 @@ public class ButtonsPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             target.scramble();
-            JButton source = (JButton)e.getSource();
+            JButton source = (JButton) e.getSource();
             source.setEnabled(false);
 
             selection.setEnabled(true);
@@ -106,45 +111,13 @@ public class ButtonsPanel extends JPanel {
         }
     }
 
-    private  class sortAction implements ActionListener, Runnable {
+    private class sortAction implements ActionListener, Runnable {
         private GraphicsPanel target;
         private SortingFunction<ImprovedRectangle> sorter;
-        private ActionEvent e;
-        private SortType sortType;
 
         public sortAction(GraphicsPanel target, SortingFunction<ImprovedRectangle> sorter, SortType sort) {
             this.target = target;
             this.sorter = sorter;
-            sortType = sort;
-        }
-
-        @Override
-        public void run() {
-
-            if (e == null) {
-                throw new UnsupportedOperationException("This runnable should not be called directly!");
-            }
-
-            Thread thread = target.sortRectangles(sorter);
-            try {
-                while (thread.isAlive()) {
-                    Thread.sleep(5);
-                }
-
-                if (sortType == SortType.SELECTIONSORT)
-                    selectionDone = true;
-                else
-                    mergeDone = true;
-
-                if (mergeDone && selectionDone) {
-                    scramble.setEnabled(true);
-                }
-
-                reset.setEnabled(true);
-            } catch (InterruptedException x) {
-                System.out.println("Interrupted exception2, sortAction.");
-            }
-            e = null;
         }
 
         @Override
@@ -154,9 +127,39 @@ public class ButtonsPanel extends JPanel {
             merge.setEnabled(false);
             reset.setEnabled(false);
 
-            this.e = e;
             Thread newThread = new Thread(this);
-            newThread.start();
+            newThread.start(); // This functionality has to be put inside a runnable object,
+            // as it will otherwise clog up the event dispatch and painting thread
+        }
+
+        @Override
+        public void run() {
+
+            Thread thread = target.sortRectangles(sorter);
+            try {
+                while (thread.isAlive()) {
+                    Thread.sleep(5);
+                }
+
+                if (sorter.getSortType() == SortType.SELECTIONSORT)
+                    selectionDone = true;
+                else if (sorter.getSortType() == SortType.MERGESORT)
+                    mergeDone = true;
+
+                if (mergeDone && selectionDone) {
+                    scramble.setEnabled(true);
+                }
+
+                reset.setEnabled(true);
+            } catch (InterruptedException x) {
+
+                // Contingency in case something goes wrong - reset the program button states to opening to recovery
+                scramble.setEnabled(true);
+                selection.setEnabled(false);
+                merge.setEnabled(false);
+                reset.setEnabled(false);
+                System.out.println("Interrupted exception, sortAction.");
+            }
         }
     }
 }

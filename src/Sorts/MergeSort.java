@@ -6,13 +6,18 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * Created by darryl on 2016-03-11.
- *
+ * <p>
  * I have to sort this in-place. -.-
  */
 public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
 
     private Lock read = null;
     private Lock write = null;
+
+    @Override
+    public SortType getSortType() {
+        return SortType.MERGESORT;
+    }
 
     @Override
     protected void internalSort() {
@@ -25,10 +30,9 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
     }
 
     private Bounds internalSortHelper(Bounds boundary) {
-        if(boundary.size() < 2){
+        if (boundary.size() < 2) {
             return boundary;
-        }
-        else {
+        } else {
 
             int partition = (boundary.end + boundary.begin) / 2;
 
@@ -64,7 +68,6 @@ public class MergeSort<T extends Comparable<? super T>> extends BaseSort<T> {
             T leftComparator = leftPointer.next();
             T rightComparator = rightPointer.next();
             T valueToWrite = null;
-
 
 
             if (leftComparator.compareTo(rightComparator) < 0) {

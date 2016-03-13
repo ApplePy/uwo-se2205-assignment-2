@@ -1,4 +1,5 @@
 package Sorts;
+
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -9,12 +10,17 @@ public class SelectionSort<T extends Comparable<? super T>> extends BaseSort<T> 
     private Lock read = null;
     private Lock write = null;
 
+    @Override
+    public SortType getSortType() {
+        return SortType.SELECTIONSORT;
+    }
+
     protected void internalSort() {
         if (RWLock != null) {
             read = RWLock.readLock();
             write = RWLock.writeLock();
         }
-        for (int i = begin; i < end && i < array.size(); i++){
+        for (int i = begin; i < end && i < array.size(); i++) {
             if (RWLock != null)
                 read.lock();
 
@@ -47,7 +53,7 @@ public class SelectionSort<T extends Comparable<? super T>> extends BaseSort<T> 
 
     private void swap(int pos1, int pos2) {
         T temp = array.get(pos1);
-        array.set(pos1,array.get(pos2));
+        array.set(pos1, array.get(pos2));
         array.set(pos2, temp);
     }
 }

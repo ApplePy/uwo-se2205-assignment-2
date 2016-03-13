@@ -1,37 +1,41 @@
 package GUI;
 
 import Sorts.SortingFunction;
-import Sorts.MergeSort;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 /**
  * Created by darryl on 2016-03-10.
  */
+
+@SuppressWarnings("unchecked")
 public class GraphicsPanel extends JPanel {
 
     private ArrayList<ImprovedRectangle> rectanglesOriginal;
     private ArrayList<ImprovedRectangle> rectangles;
     private ReentrantReadWriteLock rectLock = new ReentrantReadWriteLock();
 
-    public GraphicsPanel () {
+    public GraphicsPanel() {
         super();
         commonConstructor();
     }
-    public GraphicsPanel ( LayoutManager layout) {
-        super (layout);
+
+    public GraphicsPanel(LayoutManager layout) {
+        super(layout);
         commonConstructor();
     }
-    public GraphicsPanel ( boolean isDoubleBuffered) {
-        super (isDoubleBuffered);
+
+    public GraphicsPanel(boolean isDoubleBuffered) {
+        super(isDoubleBuffered);
         commonConstructor();
     }
-    public GraphicsPanel ( LayoutManager layout, boolean isDoubleBuffered) {
+
+    public GraphicsPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         commonConstructor();
     }
@@ -50,9 +54,10 @@ public class GraphicsPanel extends JPanel {
         ReadLock rl = rectLock.readLock();
 
         rl.lock();
-        // TODO: Possible divide-by-zero error
-        int width = getWidth() / rectangles.size();   // Not allowed to resize the rectangles themselves...
-        int startPos = (getWidth() - (rectangles.size() * width)) / 2;
+        int numberOfRects = (rectangles.size() <= 0) ? 256 : rectangles.size(); // Eliminating a possible divide-by-zero
+
+        int width = getWidth() / numberOfRects;   // Not allowed to resize the rectangles themselves...
+        int startPos = (getWidth() - (numberOfRects * width)) / 2;
         int counter = 0;
 
         for (ImprovedRectangle rect : rectangles) {
@@ -94,7 +99,7 @@ public class GraphicsPanel extends JPanel {
         return sortRectangles(input, true);
     }
 
-    private Thread sortRectangles (SortingFunction<ImprovedRectangle> input, boolean repaint) {
+    private Thread sortRectangles(SortingFunction<ImprovedRectangle> input, boolean repaint) {
         if (input != null) {
             JPanel panel = null;
 
@@ -105,8 +110,7 @@ public class GraphicsPanel extends JPanel {
                 panel = this;
 
             return input.asyncSort(rectangles, 0, rectangles.size(), rectLock, panel);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("A sorting function must be supplied!");
         }
     }

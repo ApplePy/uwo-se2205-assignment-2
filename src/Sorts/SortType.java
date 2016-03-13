@@ -1,9 +1,9 @@
-package GUI;
+package Sorts;
 
 /**
  * Created by darryl on 2016-03-13.
  */
-enum SortType {
+public enum SortType {
     MERGESORT,
     SELECTIONSORT
 }
