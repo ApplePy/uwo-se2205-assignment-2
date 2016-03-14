@@ -1,4 +1,4 @@
-package Sorts;
+package code_dmurra47_assignment2.Sorts;
 
 /**
  * A simple class to represent the beginning and end of a range. Used for MergeSort.
