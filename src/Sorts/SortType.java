@@ -1,7 +1,13 @@
 package Sorts;
 
 /**
- * Created by darryl on 2016-03-13.
+ * Enumeration listing the types of sorts available.
+ *
+ * @author Darryl Murray, dmurra47@uwo.ca
+ * @version 1.0
+ * @see SortingFunction
+ * @see MergeSort
+ * @see SelectionSort
  */
 public enum SortType {
     MERGESORT,
