@@ -75,7 +75,7 @@ public class GraphicsPanel extends JPanel {
      */
     private void commonConstructor() {
         // Sets the preferred size of this panel
-        setPreferredSize(new Dimension(640 * 4 / 5, 500)); // TODO: FIX HARDCODING!
+        setPreferredSize(new Dimension(640 * 4 / 5, 500)); // DIMENSIONS ARE HARDCODED!
 
         // Set title text and size
         JLabel title = new JLabel("Visualization Area");
@@ -105,6 +105,7 @@ public class GraphicsPanel extends JPanel {
         int width = (getWidth() / numberOfRects > 0) ? getWidth() / numberOfRects : 1;   // Prevent widths of zero
         int startPos = (getWidth() - (numberOfRects * width)) / 2;
         int counter = 0;
+        int heightRatio = getHeight() * 3 / 5 / ImprovedRectangle.getMaxRandomHeight();  // To shrink bars if window resizes.
 
         // Display all the rectangles equally spaced across the panel screen, with a common bottom y-coordinate.
         // Also resizes the height of rectangles displayed if the screen's dimensions have been changed mid-sort.
@@ -112,11 +113,10 @@ public class GraphicsPanel extends JPanel {
             g.setColor(rect.getRectColour());
             g.fillRect(
                     counter++ * width + startPos,
-                    getHeight() * 4 / 5 - rect.height * getHeight() * 3 / 5 / ImprovedRectangle.getMaxRandomHeight(),
+                    getHeight() * 4 / 5 - rect.height * heightRatio,
                     rect.width,
-                    rect.height * getHeight() * 3 / 5 / ImprovedRectangle.getMaxRandomHeight()
+                    rect.height * heightRatio
             );
-            // TODO: Clean up fillRect - it's messy.
         }
 
         rl.unlock(); // Reading and painting complete, unlock rectangles array

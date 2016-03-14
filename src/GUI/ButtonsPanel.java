@@ -89,7 +89,7 @@ public class ButtonsPanel extends JPanel {
      */
     private void commonConstructor() {
         // Sets the preferred size of the panel
-        setPreferredSize(new Dimension(640 / 5, 500)); // TODO: FIX HARDCODING!
+        setPreferredSize(new Dimension(640 / 5, 500)); // DIMENSIONS ARE HARDCODED!
 
         // Adds the buttons to this panel
         add(scramble);

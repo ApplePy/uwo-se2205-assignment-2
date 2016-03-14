@@ -15,10 +15,6 @@ import java.awt.*;
  */
 public class MainFrame extends JFrame {
 
-    // TODO: Why is this here?
-    public int width = 640;
-    public int height = 500;
-
     private MainPanel topPanel;
 
     /**
@@ -61,7 +57,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack(); // Resize the window to properly capture all the content
         setMinimumSize(new Dimension(getWidth(), getHeight())); // Set the found size to the minimum size
-        setResizable(false); // Disable resizing
+        setResizable(false); // Disable resizing - a challenge for another day.
         setVisible(true);
         topPanel.setupComplete(); // Signal to child pane that setup is complete
     }
